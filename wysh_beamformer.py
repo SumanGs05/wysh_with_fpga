@@ -65,7 +65,7 @@ FREQ_MAX = 4000.0
 HIGH_PASS_HZ = 100.0   # bins below this are zeroed (removes DC and rumble)
 ALPHA = 0.98           # covariance smoothing per frame (~127 frames/s -> ~0.4 s memory)
 LOADING = 0.05         # diagonal loading, relative to signal power (higher = safer, closer to DAS)
-OUTPUT_GAIN = 3.0
+OUTPUT_GAIN = 7.0
 MAX_BUFFER_S = 0.3     # if the Pi falls behind by more than this, old audio is dropped
 
 SPEED_OF_SOUND = 343.0
@@ -280,7 +280,13 @@ def main():
     for fn, args in ((reader_loop, (ser, fq)), (dsp_loop, (fq, player)), (stats_loop, ())):
         threading.Thread(target=fn, args=args, daemon=True).start()
 
-    print(__doc__.split("Controls while running:")[1])
+        print("""
+Controls while running:
+    <number>   steer the beam, degrees (0 = ahead, +90 = right, -90 = left, +-180 = behind)
+    m          toggle MVDR <-> delay-and-sum
+    g <x>      output gain, e.g.  g 5
+    q          quit
+""")
     while running:
         try:
             cmd = input("beam> ").strip().lower()
